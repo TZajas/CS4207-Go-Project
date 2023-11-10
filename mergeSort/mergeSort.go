@@ -11,51 +11,34 @@ func ConcurrentMergeSort(nums []uint64) []uint64 {
 		return nums
 	}
 
-	// If the length of the input is small (<= 2000), use the sequential merge sort.
-	if len(nums) <= 2000 {
-		return sequentialMergeSort(nums)
-	} else {
-		// Calculate the middle index.
-		mid := len(nums) / 2
-
-		// Initialize slices for the left and right sub-arrays.
-		var left, right []uint64
-
-		// Create a WaitGroup to synchronize the goroutines.
-		var wg sync.WaitGroup
-		wg.Add(2)
-
-		// Launch a goroutine to sort the left sub-array.
-		go func() {
-			left = ConcurrentMergeSort(nums[:mid])
-			wg.Done()
-		}()
-
-		// Launch a goroutine to sort the right sub-array.
-		go func() {
-			right = ConcurrentMergeSort(nums[mid:])
-			wg.Done()
-		}()
-
-		// Wait for both goroutines to complete.
-		wg.Wait()
-
-		// Merge the sorted left and right sub-arrays and return the result.
-		return mergeSlices(left, right)
-	}
-}
-
-func sequentialMergeSort(nums []uint64) []uint64 {
-	if len(nums) <= 1 {
-		return nums
-	}
-
-	// Recursively sort the left and right sub-arrays.
+	// Calculate the middle index.
 	mid := len(nums) / 2
-	left := sequentialMergeSort(nums[:mid])
-	right := sequentialMergeSort(nums[mid:])
 
+	// Initialize slices for the left and right sub-arrays.
+	var left, right []uint64
+
+	// Create a WaitGroup to synchronize the goroutines.
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	// Launch a goroutine to sort the left sub-array.
+	go func() {
+		left = ConcurrentMergeSort(nums[:mid])
+		wg.Done()
+	}()
+
+	// Launch a goroutine to sort the right sub-array.
+	go func() {
+		right = ConcurrentMergeSort(nums[mid:])
+		wg.Done()
+	}()
+
+	// Wait for both goroutines to complete.
+	wg.Wait()
+
+	// Merge the sorted left and right sub-arrays and return the result.
 	return mergeSlices(left, right)
+
 }
 
 // Merges two sorted slices into a single sorted slice.

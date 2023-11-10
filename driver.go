@@ -1,7 +1,7 @@
 package main
 
 import (
-	mergeSort "algorithms/mergeSort"
+	bubbleSort "algorithms/bubbleSort"
 	"fmt"
 	"math/rand"
 	"os"
@@ -15,11 +15,11 @@ func main() {
 	fmt.Println("Sorting 300 million numbers...")
 	times := make([]time.Duration, numRuns)
 	for i := 0; i < numRuns; i++ {
-		slice := generateSlice(1000) //takes 5-10 seconds to sort for optimised algorithms
+		slice := generateSlice(200) //takes 5-10 seconds to sort for optimised algorithms
 		startTime := time.Now()
 
 		//Insert Algorithm Here
-		sortedSlice := mergeSort.ConcurrentMergeSort(slice)
+		sortedSlice := bubbleSort.BubbleSortDriver(slice)
 
 		time := time.Since(startTime)
 
