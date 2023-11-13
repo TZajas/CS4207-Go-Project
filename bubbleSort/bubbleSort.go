@@ -1,35 +1,35 @@
 package bubbleSort
 
-import "sync"
+import (
+	"sync"
+)
 
-func BubbleSortDriver(nums []uint64) []uint64 {
+func ConcurrentBubbleSort(nums []int) []int {
 	mid := len(nums) / 2
 	left := nums[:mid]
 	right := nums[mid:]
 
 	var wg sync.WaitGroup
-	ch := make(chan bool)
 
 	wg.Add(2)
 
-	go ConcurrentBubbleSort(left, &wg, ch)
-	go ConcurrentBubbleSort(right, &wg, ch)
+	go func() {
+		left = bubbleSort(left, &wg)
+	}()
+	go func() {
+		right = bubbleSort(right, &wg)
+	}()
 
 	wg.Wait()
 
-	<-ch // Wait for the first half to be sorted
-	<-ch // Wait for the second half to be sorted
-	close(ch)
-
-	return nums
+	return combineSlices(left, right)
 }
 
-//Creating a parallel version of the bubble sort algorithm involves
-//dividing the array into subarrays and sorting each subarray concurrently.
-func ConcurrentBubbleSort(nums []uint64, wg *sync.WaitGroup, ch chan bool) {
+// Creating a parallel version of the bubble sort algorithm involves
+// dividing the array into subarrays and sorting each subarray concurrently.
+func bubbleSort(nums []int, wg *sync.WaitGroup) []int {
 	len := len(nums)
 
-	//Perform Bubble Sort on inputted sub array
 	for i := 0; i < len-1; i++ {
 		for j := 0; j < len-i-1; j++ {
 			if nums[j] > nums[j+1] {
@@ -39,6 +39,36 @@ func ConcurrentBubbleSort(nums []uint64, wg *sync.WaitGroup, ch chan bool) {
 	}
 
 	defer wg.Done()
+	return nums
+}
 
-	ch <- true
+func combineSlices(left, right []int) []int {
+	output := make([]int, len(left)+len(right))
+	i, j := 0, 0
+
+	// Merge elements from the left and right sub-arrays while maintaining the sorted order.
+	for i < len(left) && j < len(right) {
+		if left[i] <= right[j] {
+			output[i+j] = left[i]
+			i++
+		} else {
+			output[i+j] = right[j]
+			j++
+		}
+	}
+
+	// Append any remaining elements from the left sub-array. (if any left)
+	for i < len(left) {
+		output[i+j] = left[i]
+		i++
+	}
+
+	// Append any remaining elements from the right sub-array. (if any left)
+	for j < len(right) {
+		output[i+j] = right[j]
+		j++
+	}
+
+	// Return the merged and sorted slice.
+	return output
 }

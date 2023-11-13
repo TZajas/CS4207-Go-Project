@@ -5,7 +5,7 @@ import (
 )
 
 // ConcurrentMergeSort performs a concurrent sort on an input slice of uint64.
-func ConcurrentMergeSort(nums []uint64) []uint64 {
+func ConcurrentMergeSort(nums []int) []int {
 	// If the lenght of input is less than or equal to 1 return input
 	if len(nums) <= 1 {
 		return nums
@@ -15,7 +15,7 @@ func ConcurrentMergeSort(nums []uint64) []uint64 {
 	mid := len(nums) / 2
 
 	// Initialize slices for the left and right sub-arrays.
-	var left, right []uint64
+	var left, right []int
 
 	// Create a WaitGroup to synchronize the goroutines.
 	var wg sync.WaitGroup
@@ -42,8 +42,8 @@ func ConcurrentMergeSort(nums []uint64) []uint64 {
 }
 
 // Merges two sorted slices into a single sorted slice.
-func mergeSlices(left, right []uint64) []uint64 {
-	output := make([]uint64, len(left)+len(right))
+func mergeSlices(left, right []int) []int {
+	output := make([]int, len(left)+len(right))
 	i, j := 0, 0
 
 	// Merge elements from the left and right sub-arrays while maintaining the sorted order.

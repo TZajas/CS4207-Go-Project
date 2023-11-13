@@ -2,49 +2,45 @@ package main
 
 import (
 	bubbleSort "algorithms/bubbleSort"
+	// mergeSort "algorithms/mergeSort"
 	"fmt"
 	"math/rand"
-	"os"
 	"sort"
 	"time"
 )
 
 func main() {
-	const numRuns = 3
-	rand.Seed(420) // adds determinism to Slice generation
-	fmt.Println("Sorting 300 million numbers...")
-	times := make([]time.Duration, numRuns)
-	for i := 0; i < numRuns; i++ {
-		slice := generateSlice(200) //takes 5-10 seconds to sort for optimised algorithms
-		startTime := time.Now()
+	numbers := generateNumbers()
+	startTime := time.Now()
 
-		//Insert Algorithm Here
-		sortedSlice := bubbleSort.BubbleSortDriver(slice)
+	sortedNumbers := bubbleSort.ConcurrentBubbleSort(numbers)
 
-		time := time.Since(startTime)
+	endTime := time.Since(startTime)
 
-		if sort.SliceIsSorted(sortedSlice, func(i, j int) bool { return sortedSlice[i] <= sortedSlice[j] }) {
-			fmt.Println("Sorted, Algorithm functional")
-			times[i] = time
-			fmt.Println("Run", i+1, "time:", times[i])
-		} else {
-			fmt.Println("Not sorted, Algorithm not functional")
-			os.Exit(1) // terminate test if algo fails
-		}
+	isSorted := sort.SliceIsSorted(sortedNumbers, func(i, j int) bool {
+		return sortedNumbers[i] < sortedNumbers[j]
+	})
+
+	if isSorted {
+		fmt.Printf("Successfully Sorted Array in %v\n", endTime)
+	} else {
+		fmt.Println("Failed to sort Array.")
 	}
-
-	totalTime := time.Duration(0)
-	for _, v := range times {
-		totalTime += v
-	}
-	fmt.Println("Average time:", totalTime/numRuns)
 }
 
-// Generates a slice of size, size filled with random positive 64bit numbers
-func generateSlice(size int) []uint64 {
-	slice := make([]uint64, size)
-	for i := 0; i < size; i++ {
-		slice[i] = rand.Uint64()
+func generateNumbers() []int {
+	// Seed the random number generator
+	rand.Seed(420)
+
+	// Specify the range for random numbers
+	min := -9999
+	max := 9999
+
+	// Generate a random array of 10,000 integers
+	randomSlice := make([]int, 100000)
+	for i := 0; i < 10000; i++ {
+		randomSlice[i] = rand.Intn(max-min+1) + min
 	}
-	return slice
+
+	return randomSlice
 }
