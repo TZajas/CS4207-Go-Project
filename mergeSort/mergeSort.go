@@ -4,7 +4,7 @@ import (
 	"sync"
 )
 
-// ConcurrentMergeSort performs a concurrent sort on an input slice of uint64.
+// ConcurrentMergeSort performs a concurrent sort on an input slice of ints.
 func ConcurrentMergeSort(nums []int) []int {
 	// If the lenght of input is less than or equal to 1 return input
 	if len(nums) <= 1 {
