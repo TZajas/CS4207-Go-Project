@@ -69,6 +69,6 @@ func mergeSlices(left, right []int) []int {
 		j++
 	}
 
-	// Return the merged and sorted slice.
+	// Return the merged slice.
 	return output
 }

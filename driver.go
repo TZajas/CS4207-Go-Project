@@ -10,6 +10,9 @@ import (
 )
 
 func main() {
+	fmt.Println("Sorting Array of 10,000 Random Integers...")
+	fmt.Println("")
+
 	numbers := generateNumbers(10000, -10000)
 
 	// Start Timer
@@ -17,20 +20,51 @@ func main() {
 
 	// Insert either "insertion" or "merge" into the string parameter to use either
 	// the concurrent insertion sort or the concurrent merge sort
-	sortedNumbers := concurrentSort("insertion", numbers)
+	sortedNumbersInsertion := concurrentSort("insertion", numbers)
 
 	// End Timer
-	endTime := time.Since(startTime)
+	endTimeInsertion := time.Since(startTime)
 
 	// Make sure array is sorted properly
-	isSorted := sort.SliceIsSorted(sortedNumbers, func(i, j int) bool {
-		return sortedNumbers[i] < sortedNumbers[j]
+	isSortedInsertion := sort.SliceIsSorted(sortedNumbersInsertion, func(i, j int) bool {
+		return sortedNumbersInsertion[i] < sortedNumbersInsertion[j]
 	})
 
-	if isSorted {
-		fmt.Printf("Successfully Sorted Array in %v\n", endTime)
+	// Printing completion time of insertion sort
+	if isSortedInsertion {
+		fmt.Printf("Successfully Sorted Array Using a Concurrent Insertion Sort in %v\n", endTimeInsertion)
+		fmt.Println("")
 	} else {
-		fmt.Println("Failed to sort Array.")
+		fmt.Println("Failed to Sort Array.")
+	}
+
+	// Start Timer again
+	startTime = time.Now()
+
+	// Insert either "insertion" or "merge" into the string parameter to use either
+	// the concurrent insertion sort or the concurrent merge sort
+	sortedNumbersMerge := concurrentSort("merge", numbers)
+
+	// End Timer again
+	endTimeMerge := time.Since(startTime)
+
+	isSortedMerge := sort.SliceIsSorted(sortedNumbersMerge, func(i, j int) bool {
+		return sortedNumbersMerge[i] < sortedNumbersMerge[j]
+	})
+
+	// Printing completion time of merge sort
+	if isSortedMerge {
+		fmt.Printf("Successfully Sorted Array Using a Concurrent Merge Sort in %v\n", endTimeMerge)
+		fmt.Println("")
+	} else {
+		fmt.Println("Failed to Sort Array.")
+	}
+
+	// Printing the difference between the two
+	if endTimeInsertion < endTimeMerge {
+		fmt.Printf("The Insertion Sort was %v faster than the Merge Sort", endTimeMerge-endTimeInsertion)
+	} else {
+		fmt.Printf("The Merge Sort was %v faster than the Insertion Sort", endTimeInsertion-endTimeMerge)
 	}
 }
 
@@ -40,7 +74,7 @@ func generateNumbers(max, min int) []int {
 	rand.Seed(420)
 
 	// Generate a random array of 10,000 integers
-	randomSlice := make([]int, 100000)
+	randomSlice := make([]int, 10000)
 	for i := 0; i < 10000; i++ {
 		randomSlice[i] = rand.Intn(max-min+1) + min
 	}

@@ -12,9 +12,6 @@ func ConcurrentInsertionSort(nums []int, goroutines int) []int {
 	// Create a WaitGroup to synchronize the goroutines.
 	var wg sync.WaitGroup
 
-	// Initialise return slice
-	var sortedSlices []int
-
 	// Split input slice into chunks(subarrays) depending on the goroutines parameter
 	chunks := splitSlice(nums, goroutines)
 
@@ -31,13 +28,29 @@ func ConcurrentInsertionSort(nums []int, goroutines int) []int {
 
 	wg.Wait()
 
-	// Combine and sort all the sorted chunks(subarrays) using the mergeSlices
-	// algorithm commonly used in merge sort
-	for _, sortedSlice := range chunks {
-		sortedSlices = mergeSlices(sortedSlices, sortedSlice)
-	}
+	// Combine and sort all the sorted chunks(subarrays) using the mergeSlices function
+	leftChunks, rightChunks := chunks[:len(chunks)/2], chunks[len(chunks)/2:]
+	var leftSorted, rightSorted []int
 
-	return sortedSlices
+	wg.Add(2)
+
+	go func() {
+		for _, sortedSlice := range leftChunks {
+			leftSorted = mergeSlices(leftSorted, sortedSlice)
+		}
+		wg.Done()
+	}()
+
+	go func() {
+		for _, sortedSlice := range rightChunks {
+			rightSorted = mergeSlices(rightSorted, sortedSlice)
+		}
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	return mergeSlices(leftSorted, rightSorted)
 
 }
 
