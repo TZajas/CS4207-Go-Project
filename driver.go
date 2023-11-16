@@ -85,12 +85,13 @@ func generateNumbers(max, min int) []int {
 // Decides which algorithm to use
 func concurrentSort(alg string, nums []int) []int {
 	if alg == "insertion" {
-		// Through trial and error I found using 1800 goroutines for this algorithm yields the quickest results.
+		// Through trial and error I found using 150 goroutines for this algorithm on 10,000 integers yields the quickest results.
 		// I believe this is because the regular insertion sort works best on smaller arrays
-		// But if make the chunks any smaller the algorithm gets slowed down by the mergeSlices function
+		// But if I make the chunks any smaller the algorithm gets slowed down by the mergeSlices function
 		// Which has too many slices to merge
-		// I found the sweet spot of the number of goroutines to be approx 18% of total amount of numbers in the array
-		return insertionSort.ConcurrentInsertionSort(nums, 1800)
+		// Also creating and managing goroutines has associated overhead.
+		// If you create too many goroutines the overhead might dominate the actual computation leading to slower performance.
+		return insertionSort.ConcurrentInsertionSort(nums, 150)
 	} else if alg == "merge" {
 		return mergeSort.ConcurrentMergeSort(nums)
 	} else {

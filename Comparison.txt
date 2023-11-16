@@ -1,0 +1,33 @@
+Exececution time on 10,000 random integers
+
+Merge Sort
+----------
+Approx 20.5ms
+
+
+InsertionSort
+-------------
+Approx 1.74ms
+
+
+Difference
+----------
+Approx 18.8ms
+
+
+Possible Reasons for Difference
+-------------------------------
+Estimate of goroutines launched during the MergeSort algorithm = quite large due to recursive nature of algorithm, with two new goroutines being created every recursive call
+Go routines launched during InsertionSorn algorithm (depends on input but mine is 150) = approx 150
+
+Creating and managing goroutines has associated overhead.
+If you create too many goroutines the overhead might dominate the actual computation leading to slower performance.
+I believe this is the case in these two algorithms
+If I pass a larger goroutines parameter into the insertion sort such as 5,000 the algorithm slows down to approx 9ms, but this could also be due to the mergeSlices algorithm having more slices to merge.
+Both are valid arguments.
+
+The runtime of these algorithms also depends on the available hardware resources, particularly the number of CPU cores.
+Because with fewer cores, fewer goroutines can execute simultaneously, potentially reducing the benefits of parallel processing.
+
+
+
